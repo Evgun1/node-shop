@@ -4,9 +4,11 @@ const pgClient = require('../pgClient');
 const { log } = require('console');
 
 async function start() {
+    console.log('migrate db');
     const migrationsPath = [
         path.resolve(__dirname, '..', 'models'),
         path.resolve(__dirname, '..', 'relations'),
+        path.resolve(__dirname, '..', 'migrations'),
     ];
     try {
         await pgClient.connect();
@@ -30,7 +32,9 @@ async function start() {
                 });
             });
         });
-    } catch (error) {}
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 start();

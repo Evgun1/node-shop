@@ -1,0 +1,43 @@
+.form {
+    display: flex;
+    gap: 10px;
+}
+
+.navAmount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 208px;
+    padding: 0 8px;
+
+    border-radius: 20px;
+    border: 1px solid var(--grey-100, #eef0f4);
+    /* background: var(--white, #FFF); */
+}
+
+.navAmount div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 48px;
+}
+
+.navAmount button {
+    /* padding: 5px;
+    width: 40px; */
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+}
+
+.btn {
+    width: 100%;
+}
+
+.mainDescroption {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

@@ -5,7 +5,7 @@ const config = {
     port: 5432,
     database: 'node-shop',
     user: 'postgres',
-    password: 'EvgexaZR123',
+    password: 'postgres',
 };
 
 const client = new Client(config);

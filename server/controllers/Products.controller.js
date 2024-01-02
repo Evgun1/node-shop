@@ -1,6 +1,6 @@
 const AppBaseController = require('./AppBaseController');
 const pgClient = require('../pgClient');
-
+const db = require('../db');
 class ProductController extends AppBaseController {
     constructor() {
         super();
@@ -13,14 +13,68 @@ class ProductController extends AppBaseController {
      * @param {*} next
      */
     async getAll(req, res, next) {
+        const urlParams = req.query;
+        const cursor = db.select('products');
+        // console.log(urlParams);
+        const where = {};
+
+        if (urlParams.order) cursor.order(urlParams.order);
+        if (urlParams.fields) cursor.fields(urlParams.fields.split(','));
+
+        if (urlParams.quantity_per_unit)
+            where.quantity_per_unit = `*${urlParams.quantity_per_unit}`;
+        if (urlParams.unit_price) where.unit_price = `*${urlParams.unit_price}`;
+        if (urlParams.units_in_stock)
+            where.units_in_stock = `*${urlParams.units_in_stock}`;
+        if (urlParams.units_on_order)
+            where.units_on_order = `*${urlParams.units_on_order}`;
+        if (urlParams.reorder_level)
+            where.reorder_level = `*${urlParams.reorder_level}`;
+        if (urlParams.discontinued)
+            where.discontinued = `*${urlParams.discontinued}`;
+
+        if (urlParams.ids) {
+            where.product_id = {
+                operator: '= ANY',
+                // value: urlParams.ids,
+                value: urlParams.ids.split(',').map((item) => parseInt(item)),
+            };
+        }
+
+        // if (condition) {
+        // }
+        cursor.where(where);
         try {
-            const result = await pgClient.query(
-                `SELECT * FROM products LIMIT 10`
-            );
-            const productsArr = result.rows;
-            res.send({ productsArr });
+            const productsArr = await cursor.query();
+            res.send(productsArr);
         } catch (error) {
-            console.log(error);
+            res.status(500);
+            res.send(error.message);
+        }
+    }
+
+    /**
+     *
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     * @param {*} next
+     */
+    async getProductId(req, res, next) {
+        console.log(req.cookies);
+        const productID = req.params.productID;
+        const cursor = db.select('products');
+
+        cursor.where({ product_id: productID });
+
+        if (req.query.fields && req.query.fields.length)
+            cursor.fields(req.query.fields.split(','));
+
+        try {
+            const product = await cursor.query();
+            res.send(product[0]);
+        } catch (error) {
+            res.status(500);
+            res.send(error.message);
         }
     }
 

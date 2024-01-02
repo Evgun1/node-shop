@@ -1,23 +1,58 @@
 const pgClient = require('../pgClient');
-
+const db = require('../db');
 const AppBaseController = require('./AppBaseController');
 
 class SuppliersController extends AppBaseController {
     constructor() {
         super();
     }
-    async get(req, res, next) {
-        const body = req.body;
+    async getAll(req, res, next) {
+        const urlParams = req.query;
+        const cursor = db.select('suppliers');
+        const where = {};
+
+        console.log(urlParams);
+        if (urlParams.order) cursor.order(urlParams.order);
+        if (urlParams.fields) cursor.fields(urlParams.fields.split(','));
+        if (urlParams.company_name)
+            where.company_name = `*${urlParams.company_name}`;
+        if (urlParams.contact_name)
+            where.contact_name = `*${urlParams.contact_name}`;
+        if (urlParams.contact_title)
+            where.contact_title = `*${urlParams.contact_title}`;
+        if (urlParams.suppliers_addres)
+            where.suppliers_addres = `*${urlParams.suppliers_addres}`;
+        if (urlParams.city) where.city = `*${urlParams.city}`;
+        if (urlParams.region) where.region = `*${urlParams.region}`;
+        if (urlParams.postal_code)
+            where.postal_code = `*${urlParams.postal_code}`;
+        if (urlParams.country) where.country = `*${urlParams.country}`;
+        if (urlParams.phone) where.phone = `*${urlParams.phone}`;
+        if (urlParams.fax) where.fax = `*${urlParams.fax}`;
+        if (urlParams.homepage) where.homepage = `*${urlParams.homepage}`;
+
         try {
-            const result = await pgClient.query(
-                `
-                SELECT * FROM suppliers LIMIT 10
-                `
-            );
-            const suppliersAll = result.rows;
-            res.send([suppliersAll]);
+            const suppliersAll = await cursor.query();
+            res.send(suppliersAll);
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async getSupplierId(req, res, next) {
+        const supplierID = req.params.supplierID;
+        const cursor = db
+            .select('suppliers')
+            .where({ supplier_id: supplierID });
+
+        if (req.query.fields && req.query.fields.length)
+            cursor.fields(req.query.fields.split(','));
+        try {
+            const result = await cursor.query();
+            res.send(result[0]);
+        } catch (error) {
+            res.status(500);
+            res.send(error.message);
         }
     }
 

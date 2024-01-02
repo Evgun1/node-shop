@@ -9,5 +9,4 @@ CREATE TABLE IF NOT EXISTS products
     units_on_order INT,
     reorder_level INT,
     discontinued FLOAT
-    
 );

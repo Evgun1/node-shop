@@ -9,7 +9,15 @@ const where = (conditions) => {
         let condition;
         if (typeof value === 'number') {
             condition = `${key} = $${i}`;
+        } else if (typeof value === 'object') {
+            const operator = value.operator;
+            value = value.value;
+            condition = `${key}  ${operator}($${i}::int[])`;
         } else if (typeof value === 'string') {
+            if (value.startsWith('IN')) {
+                value = value.substring(2);
+                condition = `${key} IN ($${i}::int[])`;
+            }
             if (value.startsWith('>=')) {
                 condition = `${key} >= $${i}`;
                 value = value.substring(2);
@@ -105,7 +113,7 @@ class Cursor {
         return this;
     }
 
-    then(callback) {
+    async query(callback) {
         // TODO: store callback to pool
         const { mode, table, columns, args } = this;
         const { whereClause, orderBy, columnName } = this;
@@ -113,36 +121,41 @@ class Cursor {
         let sql = `SELECT ${fields} FROM ${table}`;
         if (whereClause) sql += ` WHERE ${whereClause}`;
         if (orderBy) sql += ` ORDER BY ${orderBy}`;
-        this.database.query(sql, args, (err, res) => {
-            this.resolve(res);
-            const { rows, cols } = this;
-            if (mode === MODE_VALUE) {
-                const col = cols[0];
-                const row = rows[0];
-                callback(row[col.name]);
-            } else if (mode === MODE_ROW) {
-                callback(rows[0]);
-            } else if (mode === MODE_COL) {
-                const col = [];
-                for (const row of rows) {
-                    col.push(row[columnName]);
-                }
-                callback(col);
-            } else if (mode === MODE_COUNT) {
-                callback(this.rowCount);
-            } else {
-                callback(rows);
+        const res = await this.database.query(sql, args);
+        this.resolve(res);
+        const { rows, cols } = this;
+        if (mode === MODE_VALUE) {
+            const col = cols[0];
+            const row = rows[0];
+            return row[col.name];
+        } else if (mode === MODE_ROW) {
+            return rows[0];
+        } else if (mode === MODE_COL) {
+            const col = [];
+            for (const row of rows) {
+                col.push(row[columnName]);
             }
-        });
+            return col;
+        } else if (mode === MODE_COUNT) {
+            return this.rowCount;
+        } else {
+            return rows;
+        }
         return this;
     }
 }
 
 class Database {
-    constructor(config, logger) {
-        this.client = new Client(config);
-        this.config = config;
-        this.logger = logger;
+    constructor() {
+        this.client = new Client({
+            host: 'localhost',
+            port: 5432,
+            database: 'node-shop',
+            user: 'postgres',
+            password: 'postgres',
+        });
+        // this.config = config;
+        // this.logger = logger;
     }
 
     async query(sql, values, callback) {
@@ -168,6 +181,4 @@ class Database {
     }
 }
 
-module.exports = {
-    open: (config, logger) => new Database(config, logger),
-};
+module.exports = new Database();

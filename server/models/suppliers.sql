@@ -13,5 +13,3 @@ CREATE TABLE IF NOT EXISTS suppliers
     fax VARCHAR(100),
     homepage text NOT NULL
     );
-
-
