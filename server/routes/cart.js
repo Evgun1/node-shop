@@ -2,7 +2,10 @@ const express = require('express');
 const { route } = require('./categories');
 const CartController = require('../controllers/Cart.controller');
 
-const router = express.Router();
+const cartRouter = express.Router();
 
-router.get('/cart', CartController.get);
-router.post('/cart-add', CartController.post);
+cartRouter.get('/', CartController.getAll);
+cartRouter.get('/:userToken', CartController.getUserCart);
+cartRouter.post('/add', CartController.saveCart); 
+
+module.exports = cartRouter;

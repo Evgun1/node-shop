@@ -5,14 +5,17 @@ import { useEffect, useState } from 'react';
 import { addToCart } from '../../../../store/Cart/cart';
 import Cart from '../../../Elements/Cart/Cart';
 import classes from './Product.module.css';
+import { updateCart } from '../../../../store/Cart/cart.actions';
+import useSaveDbCart from '../../../../hooks/useSaveDbCart';
 
 const Product = () => {
     const data = useLoaderData();
     const product = data.product;
     const cart = useSelector((state) => state.cart);
+    const userToken = useSelector((state) => state.coockies.userToken);
     const dispatch = useDispatch();
-    useEffect(() => {}, [cart]);
     const [amount, setAmount] = useState(1);
+    const { isSending, saveCart } = useSaveDbCart();
 
     const productID = product.product_id;
 
@@ -30,12 +33,17 @@ const Product = () => {
         dispatch(addToCart({ productID, amount }));
     };
 
+    useEffect(() => {
+        saveCart(cart, userToken);
+    }, [cart]);
+
     //
     //
     //
 
     return (
         <Container>
+            {isSending && <p>Sending cart data to DB</p>}
             <form onSubmit={formSubmit} className={classes.form}>
                 <input
                     type="hidden"

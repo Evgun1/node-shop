@@ -2,17 +2,18 @@ import { useEffect, useState } from 'react';
 
 const useFetchProductsById = (productsArray, returnAmount = true) => {
     const [products, setProducts] = useState([]);
+    console.log(productsArray);
     useEffect(() => {
         const fetchProduct = async () => {
             if (productsArray && productsArray.length) {
                 const productsID = [];
                 productsArray.forEach((element) => {
-                    productsID.push(element.productID);
+                    productsID.push(element.item_id)
                 });
                 const response = await fetch(
                     'http://localhost:5000/products/?ids=' + productsID,
                     {
-                        body:JSON.stringify()
+                        body: JSON.stringify(),
                     }
                 );
                 if (!response.ok && response.status !== 200)
