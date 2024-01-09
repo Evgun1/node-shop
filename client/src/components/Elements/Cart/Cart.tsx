@@ -1,20 +1,36 @@
-import { useDispatch, useSelector } from 'react-redux';
 import useFetchProductsById from '../../../hooks/useFetchProductsByID';
 import classes from './Cart.module.css';
 import { toggle } from '../../../store/popup/popup';
 import { useState } from 'react';
-import { cartSlice } from '../../../store/Cart/cart';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { Product } from '../../../types/product';
+import { removeCart } from '../../../store/cart/cart';
 
 const Cart = () => {
     const [showCheckout, setShowCheckout] = useState(false);
-    const cartProducts = useSelector((state) => state.cart.productsArray);
+    const cartProducts = useAppSelector((state) => state.cart.productsArray);
     const products = useFetchProductsById(cartProducts);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
+
+    const userToken = useAppSelector((tocken) => tocken.coockies.userToken);
 
     const toggleCartHandler = () => {
         dispatch(toggle(null));
     };
     console.log(products);
+
+    const removeBtnClick = async (product: Product) => {
+        const response = await fetch('http://localhost:5000/cart/', {
+            method: 'DELETE',
+            // headers: {
+            //     'Content-Type': 'application/json',
+            // },
+            // body: JSON.stringify({ productID: product.product_id, userToken }),
+        });
+        if (response.ok && response.status === 200) {
+            dispatch(removeCart(product.product_id));
+        }
+    };
 
     const btnClik = () => setShowCheckout((prev) => !prev);
 
@@ -68,13 +84,28 @@ const Cart = () => {
                         ) : (
                             <>
                                 {products.map((product, index) => (
-                                    <div
-                                        key={index}
-                                        className={classes.product}
-                                    >
-                                        <h2>{product.product_title}</h2>
-                                        <div>{product.product_description}</div>
-                                        <div>{product.amount}</div>
+                                    <div className={classes.wrapperProduct}>
+                                        <div
+                                            key={index}
+                                            className={classes.product}
+                                        >
+                                            <h2>{product.product_title}</h2>
+                                            <div>
+                                                {product.product_description}
+                                            </div>
+                                            {product.amount ? (
+                                                <div>{product.amount}</div>
+                                            ) : (
+                                                ''
+                                            )}
+                                        </div>
+                                        <button
+                                            onClick={() =>
+                                                removeBtnClick(product)
+                                            }
+                                        >
+                                            Remove
+                                        </button>
                                     </div>
                                 ))}
                                 <button onClick={btnClik}>Buy</button>

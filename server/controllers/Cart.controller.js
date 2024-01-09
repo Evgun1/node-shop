@@ -51,37 +51,51 @@ class CartController {
      * @param {import('express').Response} res
      */
     async saveCart(req, res, next) {
-        const { products, userToken } = req.body;
-        if (!products || !products.length) {
+        const { curentProduct, userToken } = req.body;
+        if (!curentProduct) {
             res.status(400);
             res.send('Sended Empty Cart');
         }
 
-        for await (const product of products) {
-            console.log(product, userToken);
-            // const query = `UPDATE cart SET item_amount=${product.amount} WHERE user_token='${userToken}' AND product_id=${product.productID}; INSERT INTO cart (user_token, item_amount, product_id) VALUES('${userToken}', ${product.amount}, ${product.productID})`;
-            const value = [userToken, product.amount, product.productID];
-            // await db.query(
-            //     `UPDATE cart SET item_amount=${product.amount} WHERE user_token='${userToken}' AND product_id=${product.productID}`
-            //     // value
-            // );
-            // await db.query(
-            //     `INSERT INTO cart (user_token, item_amount, product_id) VALUES('${userToken}', ${product.amount}, ${product.productID})
-            //     SELECT '${userToken}', ${product.amount}, ${product.productID}
-            //     WHERE NOT EXISTS (SELECT * FROM cart WHERE user_token='${userToken}' AND product_id=${product.productID});`
-            //     // value
-            // );
-
-            await db.query(
-                `
-                DELETE FROM cart WHERE product_id = ${product.productID} AND user_token='${userToken}'; 
-                
-                INSERT INTO cart (user_token, item_amount, product_id)
-                VALUES('${userToken}', ${product.amount}, ${product.productID})
+        await db.query(
             `
-            );
-        }
+            INSERT INTO cart (user_token, item_amount, product_id)
+            VALUES('${userToken}', ${curentProduct.amount}, ${curentProduct.productID})
+                `
+        );
         res.send({ text: 'yes' });
+    }
+    /**
+     *
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    async updateCart(req, res) {
+        const { curentProduct, userToken } = req.body;
+        if (!curentProduct) {
+            res.status(400);
+            res.send('Sended Empty Cart');
+        }
+        await db.query(
+            `UPDATE cart SET item_amount = $2 WHERE user_token = $1 AND product_id = $3`,
+            [userToken, curentProduct.amount, curentProduct.productID]
+        );
+        res.send('update');
+    }
+    
+    async deleteCart(req, res) {
+        const { productID, userToken } = req.body;
+        if (!productID) {
+            res.status(400);
+            res.send('Feiled Deletet');
+        }
+        await db.query(
+            `
+            DELETE FROM cart WHERE product_id = $1 AND user_token = $2
+            `,
+            [productID, userToken]
+        );
+        req.send('Delete');
     }
 }
 

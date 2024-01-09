@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { toggle } from '../../../store/popup/popup';
 import Cart from './Cart';
 

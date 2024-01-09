@@ -1,28 +1,30 @@
 import { useEffect, useState } from 'react';
+import { CartItemData } from '../store/cart/cart';
+import { Product } from '../types/product';
 
-const useFetchProductsById = (productsArray, returnAmount = true) => {
-    const [products, setProducts] = useState([]);
+const useFetchProductsById = (
+    productsArray: CartItemData[],
+    returnAmount = true
+) => {
+    const [products, setProducts] = useState<Product[]>([]);
     console.log(productsArray);
     useEffect(() => {
         const fetchProduct = async () => {
             if (productsArray && productsArray.length) {
-                const productsID = [];
+                const productsID: Number[] = [];
                 productsArray.forEach((element) => {
-                    productsID.push(element.item_id)
+                    productsID.push(element.productID);
                 });
                 const response = await fetch(
-                    'http://localhost:5000/products/?ids=' + productsID,
-                    {
-                        body: JSON.stringify(),
-                    }
+                    'http://localhost:5000/products/?ids=' + productsID
                 );
                 if (!response.ok && response.status !== 200)
                     throw new Error(response.statusText);
 
-                const data = await response.json();
+                const data = (await response.json()) as Product[];
 
                 if (returnAmount) {
-                    const output = [];
+                    const output: Product[] = [];
                     data.forEach((item) => {
                         const index = productsArray.findIndex(
                             (element) => element.productID === item.product_id
@@ -43,7 +45,7 @@ const useFetchProductsById = (productsArray, returnAmount = true) => {
 
                 return data;
             } else {
-                setProducts(null);
+                setProducts([]);
             }
         };
 

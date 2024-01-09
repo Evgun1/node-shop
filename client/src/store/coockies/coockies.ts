@@ -1,10 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+type CoockieState = {
+    userToken: null | string;
+};
+
+const initialState: CoockieState = {
+    userToken: null,
+};
+
 const coockies = createSlice({
     name: 'coockies',
-    initialState: {
-        userToken: null,
-    },
+    initialState,
     reducers: {
         init(state, action) {
             const payload = action.payload;

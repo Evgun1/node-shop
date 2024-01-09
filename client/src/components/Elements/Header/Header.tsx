@@ -1,10 +1,7 @@
-import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
+import { Nav, Navbar } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import { NavLink } from 'react-router-dom';
 import CartBtn from '../Cart/CartBtn';
-
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function Header() {
     return (

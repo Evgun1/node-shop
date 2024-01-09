@@ -1,10 +1,16 @@
-import Button from 'react-bootstrap/Button';
+import  { FC } from 'react';
 import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 
-function ProductCard({ title, text, id }) {
+type ProductCartProps = {
+    title: string;
+    text: string;
+    id: number;
+};
+
+const ProductCard:FC<ProductCartProps>=({ title, text, id } )=> {
     return (
-        <Link to={`${id}`} variant="primary">
+        <Link to={`${id}`}>
             <Card>
                 <Card.Img variant="top" src="https://placehold.co/400" />
                 <Card.Body>

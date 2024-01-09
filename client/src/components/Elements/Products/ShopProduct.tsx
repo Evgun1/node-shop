@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import classes from './ShopProduct.module.css';
-import ProductCard from './ProductCard/ProductCard';
+import ProductCart from './ProductCart/ProductCart';
 import { Spinner } from 'react-bootstrap';
+import { Product } from '../../../types/product';
 
 const ShopProduct = () => {
-    const [products, setProducts] = useState();
+    const [products, setProducts] = useState<Product[]>();
 
     useEffect(() => {
         fetch('http://localhost:5000/products/')
@@ -17,7 +18,7 @@ const ShopProduct = () => {
             {products && products.length ? (
                 <div className={classes.wrapper}>
                     {products.map((value, index) => (
-                        <ProductCard
+                        <ProductCart
                             key={index}
                             id={value.product_id}
                             text={value.product_description}

@@ -1,3 +1,4 @@
+import { Dispatch } from '@reduxjs/toolkit';
 import { coockiesActions } from './coockies';
 
 function rand() {
@@ -9,7 +10,7 @@ function tokenGenerator() {
 }
 
 export function readUserCoockie() {
-    return async (dispatch) => {
+    return async (dispatch: Dispatch) => {
         const result = await window.cookieStore.get('user-token');
         let token;
         if (result === null) {

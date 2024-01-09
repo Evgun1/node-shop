@@ -1,22 +1,22 @@
-import { createBrowserRouter, createHashRouter } from 'react-router-dom';
+import { RouteObject, createBrowserRouter } from 'react-router-dom';
 import App from '../App';
 import Home from '../components/Pages/Home/Home';
 import Shop from '../components/Pages/Products/Shop';
 import Product from '../components/Pages/Products/Product/Product';
-import ProductUpdate from '../components/Pages/Products/Product/ProductUpdate';
+import ProductUpdate from '../components/Pages/Products/Product/ProudctUpdate';
 import ShopCreate from '../components/Pages/Products/ShopCreate';
-import Categories from '../components/pages/Categories/Categories';
+import Categories from '../components/Pages/Categories/Categories';
 import Category from '../components/Pages/Categories/Category/Category';
 import CategoryUpdate from '../components/Pages/Categories/Category/CategoryUpdate';
-import CategoriesCreate from '../components/Pages/Categories/CategoriesCreate';
+import CategoriesCreate from '../components/Pages/Categories/CaregoriesCreate';
 import Suppliers from '../components/Pages/Suppliers/Suppliers';
 import Supplier from '../components/Pages/Suppliers/Supplier/Supplier';
 import SupplierUpdate from '../components/Pages/Suppliers/Supplier/SupplierUpdate';
-import SuppliersCreate from '../components/pages/Suppliers/SupplierCreate';
+import SuppliersCreate from '../components/Pages/Suppliers/SupplierCreate';
 import NotFound from '../components/Pages/NotFound/NotFound';
 import productLoader from './productLoader';
 
-const roterConfig = [
+const roterConfig: RouteObject[] = [
     {
         path: '/',
         element: <App />,

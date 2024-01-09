@@ -1,13 +1,14 @@
-import { useEffect } from 'react';
+import  { FC, ReactNode, useEffect } from 'react';
 
 import { createPortal } from 'react-dom';
 import { toggle } from '../../../store/popup/popup';
 
 import { useDispatch } from 'react-redux';
 
-import classes from './Popup.module.css'
+import classes from './Popup.module.css';
 
-const Popup = (props) => {
+
+const Popup:FC<{children: ReactNode}> = (props) => {
     useEffect(() => {
         document.body.classList.add('popup-is-open');
         return () => {
@@ -16,8 +17,8 @@ const Popup = (props) => {
     }, []);
     return (
         <>
-            {createPortal(props.children, document.getElementById('popup'))}
-            {createPortal(<Overlay />, document.getElementById('overlay'))}
+            {createPortal(props.children, document.getElementById('popup') as Element)}
+            {createPortal(<Overlay />, document.getElementById('overlay')  as Element)}
         </>
     );
 };

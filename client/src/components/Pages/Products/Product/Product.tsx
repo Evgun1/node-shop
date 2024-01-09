@@ -1,19 +1,19 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { Button, Card, Container } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import { useLoaderData } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { addToCart } from '../../../../store/Cart/cart';
-import Cart from '../../../Elements/Cart/Cart';
+import { FormEventHandler, useEffect, useState } from 'react';
+// import { addToCart } from '../../../../store/cart/cart';
 import classes from './Product.module.css';
-import { updateCart } from '../../../../store/Cart/cart.actions';
-import useSaveDbCart from '../../../../hooks/useSaveDbCart';
+import useSaveDbCart from '../../../../hooks/saveDbCart';
+import { Product } from '../../../../types/product';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/redux';
+import { updateCart } from '../../../../store/cart/actions';
 
 const Product = () => {
-    const data = useLoaderData();
+    const data = useLoaderData() as { product: Product };
     const product = data.product;
-    const cart = useSelector((state) => state.cart);
-    const userToken = useSelector((state) => state.coockies.userToken);
-    const dispatch = useDispatch();
+    const cart = useAppSelector((state) => state.cart);
+    const userToken = useAppSelector((state) => state.coockies.userToken);
+    const dispatch = useAppDispatch();
     const [amount, setAmount] = useState(1);
     const { isSending, saveCart } = useSaveDbCart();
 
@@ -28,14 +28,18 @@ const Product = () => {
         }
     };
 
-    const formSubmit = (event) => {
+    const formSubmit: FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
-        dispatch(addToCart({ productID, amount }));
+        if (userToken) {
+            dispatch(
+                updateCart({
+                    cart: cart.productsArray,
+                    curentProduct: { productID: product.product_id, amount },
+                    userToken: userToken,
+                })
+            );
+        }
     };
-
-    useEffect(() => {
-        saveCart(cart, userToken);
-    }, [cart]);
 
     //
     //
@@ -74,7 +78,6 @@ const Product = () => {
                     </div>
                     <button
                         className={`${classes.btn} ${'btn btn-primary'}`}
-                        variant="primary"
                         type="submit"
                     >
                         Buy

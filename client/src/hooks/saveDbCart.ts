@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { CartState } from '../store/cart/cart';
 
 export default function () {
     const [isSending, setIsSending] = useState(false);
 
-    async function saveCart(cart, userToken) {
-        if (!cart || !cart.length || !userToken) return;
+    async function saveCart(cart: CartState, userToken: string) {
+        if (!cart || !userToken) return;
         const body = {
             products: cart.productsArray,
             userToken,
