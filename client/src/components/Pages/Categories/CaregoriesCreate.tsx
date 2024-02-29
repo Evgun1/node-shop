@@ -1,5 +1,5 @@
 const CategoriesCreate = () => {
-    return <>CategoriesCreate</>;
+  return <>CategoriesCreate</>;
 };
 
 export default CategoriesCreate;

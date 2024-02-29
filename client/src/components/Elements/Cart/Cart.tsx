@@ -17,15 +17,14 @@ const Cart = () => {
     const toggleCartHandler = () => {
         dispatch(toggle(null));
     };
-    console.log(products);
 
     const removeBtnClick = async (product: Product) => {
         const response = await fetch('http://localhost:5000/cart/', {
             method: 'DELETE',
-            // headers: {
-            //     'Content-Type': 'application/json',
-            // },
-            // body: JSON.stringify({ productID: product.product_id, userToken }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productID: product.product_id, userToken }),
         });
         if (response.ok && response.status === 200) {
             dispatch(removeCart(product.product_id));

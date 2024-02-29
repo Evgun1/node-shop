@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import cartReducer from './cart/cart';
 import popup from './popup/popup';
 import coockies from './coockies/coockies';
+import auth from './auth/auth';
 
 const store = configureStore({
     reducer: {
         cart: cartReducer,
         popup: popup,
         coockies: coockies,
+        auth: auth
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({ serializableCheck: false }),

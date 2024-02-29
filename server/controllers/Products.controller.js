@@ -41,12 +41,23 @@ class ProductController extends AppBaseController {
             };
         }
 
-        // if (condition) {
-        // }
         cursor.where(where);
+
+        if (urlParams.limit) cursor.setLimit(urlParams.limit);
+
+        if (urlParams.offset) cursor.setOffset(urlParams.offset);
+
+        if (urlParams.page) {
+            const page = parseInt(urlParams.page);
+            const limit = urlParams.limit ? parseInt(urlParams.limit) : 10;
+            cursor.setLimit(limit);
+            cursor.setOffset((page - 1) * limit);
+        }
+
         try {
             const productsArr = await cursor.query();
-            res.send(productsArr);
+            const rowCounts = await cursor.queryRowsCount();
+            res.send({ productsArr, rowCounts });
         } catch (error) {
             res.status(500);
             res.send(error.message);
@@ -60,7 +71,7 @@ class ProductController extends AppBaseController {
      * @param {*} next
      */
     async getProductId(req, res, next) {
-        console.log(req.cookies);
+        // console.log(req.cookies);
         const productID = req.params.productID;
         const cursor = db.select('products');
 
@@ -71,6 +82,7 @@ class ProductController extends AppBaseController {
 
         try {
             const product = await cursor.query();
+
             res.send(product[0]);
         } catch (error) {
             res.status(500);
@@ -102,7 +114,7 @@ class ProductController extends AppBaseController {
                     parseInt(body.discontinued),
                 ]
             );
-            console.log(result);
+            // console.log(result);
             res.send('created');
         } catch (error) {
             console.log(error);
@@ -128,7 +140,7 @@ class ProductController extends AppBaseController {
                     parseInt(body.discontinued),
                 ]
             );
-            console.log(result);
+            // console.log(result);
             res.send('change');
         } catch (error) {
             console.log(error);

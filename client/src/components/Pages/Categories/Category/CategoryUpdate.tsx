@@ -1,5 +1,5 @@
 const CategoryUpdate = () => {
-    return <>CategoryUpdate</>;
+  return <>CategoryUpdate</>;
 };
 
 export default CategoryUpdate;

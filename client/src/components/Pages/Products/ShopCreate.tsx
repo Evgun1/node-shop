@@ -1,5 +1,5 @@
 const ShopCreate = () => {
-    return <>ShopCreate</>;
+  return <>ShopCreate</>;
 };
 
 export default ShopCreate;

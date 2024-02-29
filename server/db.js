@@ -66,6 +66,8 @@ class Cursor {
         this.columns = ['*'];
         this.args = [];
         this.orderBy = undefined;
+        this.limit = 10;
+        this.offset;
     }
 
     resolve(result) {
@@ -113,14 +115,26 @@ class Cursor {
         return this;
     }
 
+    setLimit(count = 10) {
+        this.limit = count;
+        return this;
+    }
+
+    setOffset(offset) {
+        this.offset = offset;
+        return this;
+    }
+
     async query(callback) {
         // TODO: store callback to pool
         const { mode, table, columns, args } = this;
-        const { whereClause, orderBy, columnName } = this;
+        const { whereClause, orderBy, columnName, limit, offset } = this;
         const fields = columns.join(', ');
         let sql = `SELECT ${fields} FROM ${table}`;
         if (whereClause) sql += ` WHERE ${whereClause}`;
         if (orderBy) sql += ` ORDER BY ${orderBy}`;
+        if (limit) sql += ` LIMIT ${limit}`;
+        if (offset) sql += ` OFFSET ${offset}`;
         const res = await this.database.query(sql, args);
         this.resolve(res);
         const { rows, cols } = this;
@@ -142,6 +156,15 @@ class Cursor {
             return rows;
         }
         return this;
+    }
+
+    async queryRowsCount() {
+        const { table, args } = this;
+        const { whereClause, orderBy } = this;
+        let sql = `SELECT COUNT(*) FROM ${table}`;
+        if (whereClause) sql += ` WHERE ${whereClause}`;
+        const res = await this.database.query(sql, args);
+        return res.rows[0].count;
     }
 }
 

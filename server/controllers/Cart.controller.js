@@ -52,18 +52,13 @@ class CartController {
      */
     async saveCart(req, res, next) {
         const { curentProduct, userToken } = req.body;
-        if (!curentProduct) {
-            res.status(400);
-            res.send('Sended Empty Cart');
-        }
-
         await db.query(
             `
             INSERT INTO cart (user_token, item_amount, product_id)
             VALUES('${userToken}', ${curentProduct.amount}, ${curentProduct.productID})
                 `
         );
-        res.send({ text: 'yes' });
+        res.send({ text: 'save' });
     }
     /**
      *
@@ -72,17 +67,14 @@ class CartController {
      */
     async updateCart(req, res) {
         const { curentProduct, userToken } = req.body;
-        if (!curentProduct) {
-            res.status(400);
-            res.send('Sended Empty Cart');
-        }
+
         await db.query(
             `UPDATE cart SET item_amount = $2 WHERE user_token = $1 AND product_id = $3`,
             [userToken, curentProduct.amount, curentProduct.productID]
         );
         res.send('update');
     }
-    
+
     async deleteCart(req, res) {
         const { productID, userToken } = req.body;
         if (!productID) {
@@ -95,7 +87,7 @@ class CartController {
             `,
             [productID, userToken]
         );
-        req.send('Delete');
+        res.send('Delete');
     }
 }
 

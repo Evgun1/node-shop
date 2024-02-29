@@ -1,15 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 const pgClient = require('../pgClient');
-const { log } = require('console');
+const { log, error } = require('console');
+
+const migrationsPath = [
+    path.resolve(__dirname, '..', 'models'),
+    path.resolve(__dirname, '..', 'relations'),
+    path.resolve(__dirname, '..', 'migrations'),
+];
 
 async function start() {
     console.log('migrate db');
-    const migrationsPath = [
-        path.resolve(__dirname, '..', 'models'),
-        path.resolve(__dirname, '..', 'relations'),
-        path.resolve(__dirname, '..', 'migrations'),
-    ];
+
     try {
         await pgClient.connect();
         migrationsPath.forEach(async (directoryPath) => {
@@ -19,16 +21,20 @@ async function start() {
             }
 
             result.forEach((filename) => {
-                const readStream = new fs.createReadStream(
-                    path.join(directoryPath, filename)
-                );
+                const filePath = path.join(directoryPath, filename);
+                const readStream = new fs.createReadStream(filePath);
                 const fileContent = [];
                 readStream.on('data', (chunk) => fileContent.push(chunk));
                 readStream.on('error', (error) => console.log(error));
                 readStream.on('end', async () => {
                     console.log(fileContent.toString());
-                    const result = await pgClient.query(fileContent.toString());
-                    console.log(result);
+                    try {
+                        const result = await pgClient.query(
+                            fileContent.toString()
+                        );
+                    } catch (error) {
+                        console.log(filename, error);
+                    }
                 });
             });
         });

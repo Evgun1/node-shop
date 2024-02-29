@@ -17,97 +17,96 @@ import NotFound from '../components/Pages/NotFound/NotFound';
 import productLoader from './productLoader';
 
 const roterConfig: RouteObject[] = [
-    {
-        path: '/',
-        element: <App />,
-        errorElement: <NotFound />,
+  {
+    path: '/',
+    element: <App />,
+    errorElement: <NotFound />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: 'products',
         children: [
-            {
+          {
+            index: true,
+            element: <Shop />,
+          },
+          {
+            path: ':id',
+            children: [
+              {
                 index: true,
-                element: <Home />,
-            },
-            {
-                path: 'products',
-                children: [
-                    {
-                        index: true,
-                        element: <Shop />,
-                    },
-                    {
-                        path: ':id',
-                        children: [
-                            {
-                                index: true,
-                                element: <Product />,
-                                loader: productLoader,
-                            },
-                            {
-                                path: 'update',
-                                element: <ProductUpdate />,
-                            },
-                        ],
-                    },
-                    {
-                        path: 'create',
-                        element: <ShopCreate />,
-                    },
-                ],
-            },
-            {
-                path: 'categories',
-                children: [
-                    {
-                        index: true,
-                        element: <Categories />,
-                    },
-                    {
-                        path: ':id',
-                        children: [
-                            {
-                                index: true,
-                                element: <Category />,
-                            },
-                            {
-                                path: 'update',
-                                element: <CategoryUpdate />,
-                            },
-                        ],
-                    },
-                    {
-                        path: 'create',
-                        element: <CategoriesCreate />,
-                    },
-                ],
-            },
-            {
-                path: 'suppliers',
-                children: [
-                    {
-                        index: true,
-                        element: <Suppliers />,
-                    },
-                    {
-                        path: ':id',
-                        children: [
-                            {
-                                index: true,
-                                element: <Supplier />,
-                            },
-                            {
-                                path: 'update',
-                                element: <SupplierUpdate />,
-                            },
-                        ],
-                    },
-                    {
-                        path: 'create',
-                        element: <SuppliersCreate />,
-                    },
-                ],
-            },
+                element: <Product />,
+                loader: productLoader,
+              },
+              {
+                path: 'update',
+                element: <ProductUpdate />,
+              },
+            ],
+          },
+          {
+            path: 'create',
+            element: <ShopCreate />,
+          },
         ],
-    },
+      },
+      {
+        path: 'categories',
+        children: [
+          {
+            index: true,
+            element: <Categories />,
+          },
+          {
+            path: ':id',
+            children: [
+              {
+                index: true,
+                element: <Category />,
+              },
+              {
+                path: 'update',
+                element: <CategoryUpdate />,
+              },
+            ],
+          },
+          {
+            path: 'create',
+            element: <CategoriesCreate />,
+          },
+        ],
+      },
+      {
+        path: 'suppliers',
+        children: [
+          {
+            index: true,
+            element: <Suppliers />,
+          },
+          {
+            path: ':id',
+            children: [
+              {
+                index: true,
+                element: <Supplier />,
+              },
+              {
+                path: 'update',
+                element: <SupplierUpdate />,
+              },
+            ],
+          },
+          {
+            path: 'create',
+            element: <SuppliersCreate />,
+          },
+        ],
+      },
+    ],
+  },
 ];
-
 const router = createBrowserRouter(roterConfig);
 export default router;
