@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-import { AppDispatch } from './../index';
+import { AppDispatch } from '../index';
 import { UserData, setUser } from './auth';
 
 export function registerAction(userData: UserData) {
